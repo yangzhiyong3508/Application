@@ -1,0 +1,11 @@
+{
+  "src": [
+    "pages/Login",
+    "pages/Register",
+    "pages/Index",
+    "pages/About",
+    "pages/Command",
+    "pages/Settings",
+    "pages/UserInfoFill"
+  ]
+}

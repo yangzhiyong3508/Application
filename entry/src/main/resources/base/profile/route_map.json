@@ -1,0 +1,60 @@
+{
+  "routerMap": [
+    {
+      "name": "Login",
+      "pageSourceFile": "src/main/ets/pages/Login.ets",
+      "buildFunction": "LoginBuilder",
+      "data": {
+        "description" : "this is Login"
+      }
+    },
+    {
+      "name": "Register",
+      "pageSourceFile": "src/main/ets/pages/Register.ets",
+      "buildFunction": "RegisterBuilder",
+      "data": {
+        "description" : "this is Register"
+      }
+    },
+    {
+      "name": "Index",
+      "pageSourceFile": "src/main/ets/pages/Index.ets",
+      "buildFunction": "IndexBuilder",
+      "data": {
+        "description" : "this is Index"
+      }
+    },
+    {
+      "name": "About",
+      "pageSourceFile": "src/main/ets/pages/About.ets",
+      "buildFunction": "AboutBuilder",
+      "data": {
+        "description" : "this is About"
+      }
+    },
+    {
+      "name": "Settings",
+      "pageSourceFile": "src/main/ets/pages/Settings.ets",
+      "buildFunction": "SettingsBuilder",
+      "data": {
+        "description" : "this is Settings"
+      }
+    },
+    {
+      "name": "Command",
+      "pageSourceFile": "src/main/ets/pages/Command.ets",
+      "buildFunction": "CommandBuilder",
+      "data": {
+        "description" : "this is Command"
+      }
+    },
+    {
+      "name": "UserInfoFill",
+      "pageSourceFile": "src/main/ets/pages/UserInfoFill.ets",
+      "buildFunction": "UserInfoFillBuilder",
+      "data": {
+        "description" : "this is UserInfoFill"
+      }
+    }
+  ]
+}
