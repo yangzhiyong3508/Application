@@ -10,6 +10,7 @@ import http from '@ohos.net.http'
 import { IotConnector } from '../utils/IotConnector'
 import { authService, CommonConstant } from '../utils/GetIotToken'
 import { HttpPostUtil } from '../utils/HttpPostUtil'
+import { KeyCode } from '@kit.InputKit'
 import {
   DEFAULT_XFYUN_VOICE,
   FALLBACK_XFYUN_VOICE_OPTIONS,
@@ -19,6 +20,11 @@ import {
   normalizeXfyunVoiceId
 } from '../utils/XfyunVoiceUtil'
 import { AppShadow } from '../theme/Theme'
+import {
+  GamepadControlAction,
+  getGamepadActionFromAxisState,
+  getGamepadActionFromDirection
+} from '../utils/GamepadControlMapper'
 
 // ======================== 常量定义 ========================
 const COLLAPSED_VOICE_OPTION_COUNT: number = 4
@@ -400,6 +406,7 @@ export struct Control {
 
   private pressTimer: number = -1
   private isLongPress: boolean = false
+  private activeGamepadCommand: string = ''
 
   async aboutToAppear() {
     this.showToast("正在初始化...")
@@ -585,6 +592,80 @@ export struct Control {
     } catch (err) {
       console.error("动作发送失败:", JSON.stringify(err))
     }
+  }
+
+  private applyGamepadAction(action: GamepadControlAction, forceStop: boolean = false): void {
+    if (action.command === 'stop') {
+      if (!forceStop && this.activeGamepadCommand.length === 0) return
+
+      this.sendCommand('stop')
+      this.activeGamepadCommand = ''
+      this.current_command = ''
+      this.selectedPadButtonId = ''
+      return
+    }
+
+    if (this.activeGamepadCommand === action.command) return
+
+    if (this.current_command && this.current_command.length > 0) {
+      this.sendCommand('stop')
+    }
+
+    this.sendCommand(action.command)
+    this.activeGamepadCommand = action.command
+    this.current_command = action.command
+    this.selectedPadButtonId = action.buttonId
+  }
+
+  private handleGamepadKey(event: KeyEvent): void {
+    if (!event) return
+
+    if (event.type === KeyType.Up) {
+      switch (event.keyCode) {
+        case KeyCode.KEYCODE_DPAD_UP:
+        case KeyCode.KEYCODE_DPAD_DOWN:
+        case KeyCode.KEYCODE_DPAD_LEFT:
+        case KeyCode.KEYCODE_DPAD_RIGHT:
+          this.applyGamepadAction(getGamepadActionFromDirection('center'))
+          break
+        default:
+          break
+      }
+      return
+    }
+
+    if (event.type !== KeyType.Down) return
+
+    switch (event.keyCode) {
+      case KeyCode.KEYCODE_DPAD_UP:
+        this.applyGamepadAction(getGamepadActionFromDirection('up'))
+        break
+      case KeyCode.KEYCODE_DPAD_DOWN:
+        this.applyGamepadAction(getGamepadActionFromDirection('down'))
+        break
+      case KeyCode.KEYCODE_DPAD_LEFT:
+        this.applyGamepadAction(getGamepadActionFromDirection('left'))
+        break
+      case KeyCode.KEYCODE_DPAD_RIGHT:
+        this.applyGamepadAction(getGamepadActionFromDirection('right'))
+        break
+      case KeyCode.KEYCODE_BUTTON_SELECT:
+      case KeyCode.KEYCODE_BUTTON_START:
+        this.applyGamepadAction(getGamepadActionFromDirection('center'), true)
+        break
+      default:
+        break
+    }
+  }
+
+  private handleGamepadAxis(event: FocusAxisEvent): void {
+    if (!event || !event.axisMap) return
+
+    const hatX: number = event.axisMap.get(AxisModel.ABS_HAT0X) ?? 0
+    const hatY: number = event.axisMap.get(AxisModel.ABS_HAT0Y) ?? 0
+    const axisX: number = event.axisMap.get(AxisModel.ABS_X) ?? 0
+    const axisY: number = event.axisMap.get(AxisModel.ABS_Y) ?? 0
+    this.applyGamepadAction(getGamepadActionFromAxisState(hatX, hatY, axisX, axisY))
   }
 
   async updateTrackerStatus(enable: boolean) {
@@ -1438,6 +1519,11 @@ export struct Control {
     }
     .width('100%')
     .height('100%')
+    .focusable(true)
+    .defaultFocus(true)
+    .focusScopeId('dogControlGamepad', true, false)
+    .onKeyEvent((event: KeyEvent): void => this.handleGamepadKey(event))
+    .onFocusAxisEvent((event: FocusAxisEvent): void => this.handleGamepadAxis(event))
     // 字体注册已统一移至 EntryAbility.onCreate
   }
 }
