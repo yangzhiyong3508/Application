@@ -1,12 +1,24 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import { FontRegistry } from '../theme/FontRegistry';
+import { AppTheme } from '../theme/Theme';
 
 const DOMAIN = 0x0000;
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
+
+    // 应用启动一次性注册自定义字体，所有页面无需再单独 registerFont
+    FontRegistry.registerAll();
+
+    // 恢复用户上次保存的颜色模式偏好（light / dark / system）
+    try {
+      AppTheme.applyStoredMode(this.context.getApplicationContext());
+    } catch (e) {
+      hilog.warn(DOMAIN, 'testTag', 'applyStoredMode failed: %{public}s', JSON.stringify(e));
+    }
   }
 
   onDestroy(): void {
@@ -29,6 +41,7 @@ export default class EntryAbility extends UIAbility {
     windowStage.getMainWindow()
       .then(win => {
         win.setWindowLayoutFullScreen(true);
+        win.setWindowSystemBarEnable(['navigation']);
       })
   }
 

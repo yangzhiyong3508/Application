@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG soft mascot icon</title>
+  <desc id="desc">A soft solid mascot-style dog icon with a chat accent.</desc>
+  <rect x="96" y="96" width="832" height="832" rx="220" fill="#233039"/>
+  <path fill="#FFE4C7" d="M300 472c0-146 96-254 212-254s212 108 212 254v92c0 124-96 220-212 220s-212-96-212-220v-92Z"/>
+  <path fill="#F7B267" d="M334 378 260 240c-16-30 20-62 48-42l142 102c-48 12-88 38-116 78Zm356 0 74-138c16-30 62-10 52 24l-52 176c-16-28-42-50-74-62Z"/>
+  <circle cx="424" cy="482" r="34" fill="#233039"/>
+  <circle cx="600" cy="482" r="34" fill="#233039"/>
+  <path fill="#233039" d="M474 560h76c18 0 28 22 16 36l-36 40a28 28 0 0 1-42 0l-36-40c-12-14-2-36 22-36Z"/>
+  <path fill="#17A398" d="M650 270h128c58 0 104 46 104 104s-46 104-104 104h-20l-54 48c-18 16-46 2-44-22l4-34c-68-8-118-52-118-96 0-58 46-104 104-104Z"/>
+  <circle cx="696" cy="374" r="18" fill="#FFFFFF"/>
+  <circle cx="756" cy="374" r="18" fill="#FFFFFF"/>
+</svg>

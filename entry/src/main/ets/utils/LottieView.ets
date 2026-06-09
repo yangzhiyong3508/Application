@@ -2,22 +2,21 @@ import lottie, { AnimationItem } from "@ohos/lottie";
 
 @Component
 export struct LottieView {
-  name = "sleeping_2"
-  private animateItem: AnimationItem | null = null;
+  @Prop name: string = "sleeping_2"
+
   private renderingSettings: RenderingContextSettings = new RenderingContextSettings(true)
   private canvasRenderingContext: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.renderingSettings)
-  private animateItem2: AnimationItem | null = null;
+  private animationItem: AnimationItem | null = null;
 
   aboutToAppear(): void {
-    lottie.destroy('aboutToAppear')
-    this.animateItem2 = lottie.loadAnimation({
+    this.animationItem = lottie.loadAnimation({
       container: this.canvasRenderingContext,
-      renderer: 'canvas', // canvas 渲染模式
+      renderer: 'canvas',
       loop: true,
       autoplay: true,
       name: this.name,
       contentMode: 'Contain',
-      path: "lottie/"+this.name+".json",
+      path: "lottie/" + this.name + ".json",
     })
   }
 
@@ -27,16 +26,13 @@ export struct LottieView {
         Canvas(this.canvasRenderingContext)
           .width('100%')
           .height('100%')
-          //.backgroundColor(Color.Gray)
           .onReady(() => {
-            this.animateItem2?.resize();
+            this.animationItem?.resize();
           })
           .onDisAppear(() => {
-            // 组件移除时，可销毁动画资源
             lottie.destroy(this.name);
           })
       }
     }
   }
-
 }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG solid dog bubble logo</title>
+  <desc id="desc">A solid dog head with speech bubble negative space.</desc>
+  <rect width="1024" height="1024" rx="224" fill="#FFF6ED"/>
+  <path fill="#F26A2E" fill-rule="evenodd" d="M512 184c-72 0-138 24-192 64l-86-70c-28-23-70 2-62 38l38 178a322 322 0 0 0-22 118c0 178 144 322 322 322h74l122 72c30 18 68-12 54-44l-36-84c68-58 110-144 110-266 0-178-144-328-322-328Zm-76 300c0-36 29-66 66-66h84c37 0 66 30 66 66s-29 66-66 66h-12l-42 42c-12 12-32 4-32-13v-29c-35-2-64-31-64-66Z"/>
+  <circle cx="398" cy="430" r="32" fill="#2B2F33"/>
+  <circle cx="626" cy="430" r="32" fill="#2B2F33"/>
+  <path fill="#2B2F33" d="M474 530h76c18 0 28 22 16 36l-38 42a30 30 0 0 1-44 0l-38-42c-12-14-2-36 18-36Z"/>
+  <circle cx="512" cy="484" r="18" fill="#17A398"/>
+  <circle cx="580" cy="484" r="18" fill="#17A398"/>
+</svg>

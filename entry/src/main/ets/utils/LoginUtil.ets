@@ -1,4 +1,5 @@
 import http from '@ohos.net.http'
+import { normalizeXfyunVoiceId } from './XfyunVoiceUtil'
 
 /**
  * 后端返回的账户信息结构（对应后端 Account.java）
@@ -76,6 +77,7 @@ export class LoginUtil {
       AppStorage.setOrCreate('account', user.account)
       AppStorage.setOrCreate('username', user.username)
       AppStorage.setOrCreate('avatarUrl', user.avatarUrl ?? '')
+      AppStorage.setOrCreate('avatar', user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : 1)
 
       // 运动参数
       AppStorage.setOrCreate('per', user.per)
@@ -87,14 +89,17 @@ export class LoginUtil {
       // 1. 音量 (vol)
       AppStorage.setOrCreate('vol', user.vol ?? 50)
 
-      // 2. 音色 ID (voiceId) - 默认为可爱女生
-      AppStorage.setOrCreate('voiceId', user.voiceId || '7568423452617605174')
+      // 2. 音色 ID (voiceId) - 兼容历史阿里云音色，统一迁移为讯飞音色
+      const normalizedVoiceId: string = normalizeXfyunVoiceId(user.voiceId)
+      AppStorage.setOrCreate('voiceId', normalizedVoiceId)
 
       // 3. 语速 (speedRatio) - 默认为 1.0
       AppStorage.setOrCreate('speedRatio', user.speedRatio ?? 1.0)
 
-      // 4. 唤醒词 (wakeWord) - 默认为 '小狗小狗'
-      AppStorage.setOrCreate('wakeWord', user.wakeWord || '小狗小狗')
+      // 4. 唤醒词与宠物名保持一致
+      const normalizedWakeWord: string = user.wakeWord || '小E'
+      AppStorage.setOrCreate('wakeWord', normalizedWakeWord)
+      AppStorage.setOrCreate('petName', normalizedWakeWord)
 
       // 登录状态
       AppStorage.setOrCreate('isLogin', true)

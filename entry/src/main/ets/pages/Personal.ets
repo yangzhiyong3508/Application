@@ -1,420 +1,547 @@
-import { font } from "@kit.ArkUI";
-import promptAction from "@ohos.promptAction";
+import promptAction from "@ohos.promptAction"
 import { UpdateUsernameUtil } from '../utils/UpdateUsernameUtil'
+import { CommonConstant } from '../utils/GetIotToken'
+import { DEFAULT_XFYUN_VOICE } from '../utils/XfyunVoiceUtil'
+import { SurfaceCard } from '../components/SurfaceCard'
+import { IconBadge } from '../components/IconBadge'
+import { StatusChip, ChipTone } from '../components/StatusChip'
+import { SectionTitle } from '../components/SectionTitle'
+import { AppTheme, ColorModePref, isTablet } from '../theme/Theme'
 
 @Builder
 export function PersonalBuilder() {
   Personal()
 }
 
-interface Items {
-  icon_src: ResourceStr
-  str_row1: string
-  str_row2: string
-  to_page: string
+interface MenuItem {
+  iconSrc: ResourceStr
+  title: string
+  subtitle: string
+  toPage: string
+  iconBgKey: string
+  iconColorKey: string
+  requiresLogin: boolean
+}
+
+interface ThemeOption {
+  label: string
+  value: ColorModePref
 }
 
 @Component
 export struct Personal {
-  pathStack: NavPathStack = new NavPathStack();
+  pathStack: NavPathStack = new NavPathStack()
+  @Consume('pathStack') rootPathStack: NavPathStack
 
   @StorageLink('account') account: number = 0
   @StorageLink('password') password: string = ''
   @StorageLink('isLogin') isLogin: boolean = false
   @StorageLink('username') username: string = '请先登录'
   @StorageLink('avatar') avatar: number | string = 1
+  @StorageLink('colorModePref') colorMode: ColorModePref = 'system'
 
   @State showDialog: boolean = false
   @State tempUsername: string = ''
   @State bgRotateAngle: number = 0
+  @State pageWidth: number = 0
 
-  private localAvatarList: Array<ResourceStr> = [
+  private readonly localAvatarList: Array<ResourceStr> = [
     $r('app.media.avatar0'),
     $r('app.media.avatar1'),
     $r('app.media.avatar2'),
     $r('app.media.avatar3')
   ]
 
-  item_array: Array<Items> = [
-    { icon_src: $r('app.media.setting'), str_row1: '系统设置', str_row2: '账号安全、通用设置', to_page: 'Settings' },
-    { icon_src: $r('app.media.about'), str_row1: '关于我们', str_row2: '版本 v1.0.0', to_page: 'About' }
+  private readonly menuItems: Array<MenuItem> = [
+    {
+      iconSrc: $r('app.media.setting'),
+      title: '系统设置',
+      subtitle: '账号安全、通用设置',
+      toPage: 'Settings',
+      iconBgKey: 'brand_primary_subtle',
+      iconColorKey: 'brand_primary',
+      requiresLogin: true
+    },
+    {
+      iconSrc: $r('app.media.control'),
+      title: '舵机校准',
+      subtitle: '按编号调整单个舵机角度',
+      toPage: 'ServoAdjust',
+      iconBgKey: 'state_success_subtle',
+      iconColorKey: 'state_success',
+      requiresLogin: true
+    },
+    {
+      iconSrc: $r('app.media.about'),
+      title: '关于我们',
+      subtitle: '版本 v1.0.0',
+      toPage: 'About',
+      iconBgKey: 'state_warning_subtle',
+      iconColorKey: 'state_warning',
+      requiresLogin: false
+    }
   ]
 
-  aboutToAppear() {
-    // 注册字体（如果资源存在）
-    try {
-      font.registerFont({
-        familyName: "alibaba",
-        familySrc: $rawfile('AlimamaDongFangDaKai-Regular.otf')
-      })
-    } catch (e) {}
+  private readonly themeOptions: ThemeOption[] = [
+    { label: '跟随系统', value: 'system' },
+    { label: '浅色', value: 'light' },
+    { label: '深色', value: 'dark' }
+  ]
 
-    setTimeout(() => {
+  aboutToAppear(): void {
+    setTimeout((): void => {
       this.startSpectrumAnimation()
-    }, 100)
+    }, 120)
   }
 
-  startSpectrumAnimation() {
+  startSpectrumAnimation(): void {
     animateTo({
-      duration: 15000, // 放慢速度，更优雅
+      duration: 14000,
       curve: Curve.Linear,
       iterations: -1,
-    }, () => {
+    }, (): void => {
       this.bgRotateAngle = 360
     })
   }
 
   private getAvatarSrc(): ResourceStr | string {
-    if (!this.isLogin) return this.localAvatarList[0];
-    if (typeof this.avatar === 'string' && this.avatar.length > 0) return this.avatar;
-    if (typeof this.avatar === 'number') return this.localAvatarList[this.avatar] || this.localAvatarList[0];
-    return this.localAvatarList[0];
+    if (!this.isLogin) return this.localAvatarList[0]
+    if (typeof this.avatar === 'string' && this.avatar.length > 0) return this.avatar
+    if (typeof this.avatar === 'number') return this.localAvatarList[this.avatar] || this.localAvatarList[0]
+    return this.localAvatarList[0]
   }
 
-  private showEditUsernameDialog() {
+  private showEditUsernameDialog(): void {
     if (this.isLogin) {
       this.tempUsername = this.username
       this.showDialog = true
-    } else {
-      this.pathStack.pushPathByName('Login', null)
-      promptAction.showToast({ message: '请先登录！' })
+      return
     }
+    promptAction.showToast({ message: '请先登录！' })
+    this.goRootLogin(true)
   }
 
-  private async confirmChangeUsername() {
+  private async confirmChangeUsername(): Promise<void> {
     const name: string = this.tempUsername.trim()
     if (name.length === 0) {
       promptAction.showToast({ message: '用户名不能为空' })
       return
     }
+
     const result = await UpdateUsernameUtil.updateUsername(this.account, name)
     if (result.success) {
       this.username = name
       this.showDialog = false
-      promptAction.showToast({ message: result.msg })
-    } else {
-      promptAction.showToast({ message: result.msg })
+    }
+    promptAction.showToast({ message: result.msg })
+  }
+
+  private openMenu(item: MenuItem): void {
+    if (!item.requiresLogin || this.isLogin) {
+      this.pathStack.pushPathByName(item.toPage, null)
+      return
+    }
+    promptAction.showToast({ message: '请先登录' })
+    this.goRootLogin(true)
+  }
+
+  private goRootLogin(clearRootStack: boolean): void {
+    if (clearRootStack) {
+      this.rootPathStack.clear()
+    }
+    this.rootPathStack.pushPath({ name: 'Login' }, false)
+  }
+
+  private clearLocalCache(): void {
+    this.account = 0
+    this.password = ''
+    this.username = '请先登录'
+    this.avatar = 1
+    this.isLogin = false
+
+    AppStorage.setOrCreate('account', 0)
+    AppStorage.setOrCreate('password', '')
+    AppStorage.setOrCreate('username', '请先登录')
+    AppStorage.setOrCreate('avatar', 1)
+    AppStorage.setOrCreate('avatarUrl', '')
+    AppStorage.setOrCreate('isLogin', false)
+
+    AppStorage.setOrCreate('current_command', '')
+    AppStorage.setOrCreate('isTrace', false)
+    AppStorage.setOrCreate('per', 4)
+    AppStorage.setOrCreate('spd', 6)
+    AppStorage.setOrCreate('pid', 10)
+    AppStorage.setOrCreate('voiceId', DEFAULT_XFYUN_VOICE)
+    AppStorage.setOrCreate('speedRatio', 1.0)
+    AppStorage.setOrCreate('vol', 50)
+    AppStorage.setOrCreate('wakeWord', '小E')
+    AppStorage.setOrCreate('petName', '小E')
+
+    CommonConstant.token = ''
+  }
+
+  private logout(): void {
+    this.clearLocalCache()
+    this.pathStack.clear()
+    this.goRootLogin(true)
+  }
+
+  private applyColorMode(mode: ColorModePref): void {
+    this.colorMode = mode
+    try {
+      const appCtx = getContext(this).getApplicationContext()
+      AppTheme.setMode(appCtx, mode)
+    } catch (e) {
+      console.warn('[Personal] applyColorMode failed', e)
     }
   }
 
-  // ⭐ 统一样式：卡片容器
-  @Styles cardStyle() {
-    .width('92%')
-    .backgroundColor(Color.White)
-    .borderRadius(24) // 更圆润
-    // 更柔和的高级阴影
-    .shadow({ radius: 40, color: 'rgba(0,0,0,0.08)', offsetY: 10 })
-    .padding({ top: 12, bottom: 12 })
-  }
-
-  // ⭐ 统一样式：列表项点击态
-  @Styles listItemPressed() {
-    .backgroundColor('#F5F7FA') // 点击变灰
-    .scale({ x: 0.98, y: 0.98 }) // 微微缩小
-    .borderRadius(16)
-  }
-
-  @Styles listItemNormal() {
-    .backgroundColor(Color.Transparent)
-    .scale({ x: 1, y: 1 })
+  /**
+   * 解析图标徽章背景色（从 string token key 到 Resource）
+   * 注：ArkTS 不允许 $r() 接收变量字符串，所以用 switch 显式映射
+   */
+  private resolveTokenColor(key: string): ResourceColor {
+    switch (key) {
+      case 'brand_primary':         return $r('app.color.brand_primary')
+      case 'brand_primary_subtle':  return $r('app.color.brand_primary_subtle')
+      case 'state_success':         return $r('app.color.state_success')
+      case 'state_success_subtle':  return $r('app.color.state_success_subtle')
+      case 'state_warning':         return $r('app.color.state_warning')
+      case 'state_warning_subtle':  return $r('app.color.state_warning_subtle')
+      case 'state_info':            return $r('app.color.state_info')
+      case 'state_info_subtle':     return $r('app.color.state_info_subtle')
+      default:                      return $r('app.color.brand_primary')
+    }
   }
 
   build() {
     Navigation(this.pathStack) {
       Stack({ alignContent: Alignment.Top }) {
+        // 1. 页面底
+        Column()
+          .width('100%')
+          .height('100%')
+          .backgroundColor($r('app.color.page_bg_alt'))
 
-        // ============================================================
-        // 1. 梦幻极光背景 (升级版)
-        // ============================================================
-        Column() {
-          Stack() {
-            // 背景层
-            Column()
-              .width('200%')
-              .height('200%')
-              .linearGradient({
-                direction: GradientDirection.Left,
-                // ⭐ 升级配色：蓝->紫->粉->青 (莫兰迪/科技感配色)
-                colors: [
-                  ['#4FACFE', 0.0],  // 浅蓝
-                  ['#00F2FE', 0.25], // 青色
-                  ['#a18cd1', 0.5],  // 紫色
-                  ['#fbc2eb', 0.75], // 粉色
-                  ['#4FACFE', 1.0]   // 回到浅蓝 (闭环)
-                ]
-              })
-              .rotate({ angle: this.bgRotateAngle })
-              .opacity(0.9)
+        // 2. 顶部蓝色渐变
+        Column()
+          .width('100%')
+          .height(326)
+          .linearGradient({
+            direction: GradientDirection.Bottom,
+            colors: [
+              [$r('app.color.brand_gradient_start'), 0.0],
+              [$r('app.color.brand_gradient_end'), 1.0]
+            ]
+          })
 
-            // 磨砂层
-            Column()
-              .width('100%')
-              .height('100%')
-              .backgroundColor('rgba(255,255,255,0.1)') // 更通透
-              .backdropBlur(100) // 极致模糊
-          }
-          .borderRadius({ bottomLeft: 60, bottomRight: 60 }) // 更大的圆角
-          .clip(true)
-        }
-        .width('100%')
-        .height(340) // 稍微加高一点
+        // 3. 装饰旋转圆
+        Circle()
+          .width(320)
+          .height(320)
+          .fill('#29FFFFFF')
+          .position({ x: 220, y: -130 })
+          .rotate({ angle: this.bgRotateAngle })
 
-        // ============================================================
-        // 2. 滚动内容层
-        // ============================================================
+        Circle()
+          .width(250)
+          .height(250)
+          .fill('#1AFFFFFF')
+          .position({ x: -100, y: 130 })
+          .rotate({ angle: -this.bgRotateAngle * 0.6 })
+
+        // 4. 主内容
         Scroll() {
           Column() {
-            // 标题栏
-            Row() {
+            // 标题
+            Column({ space: 6 }) {
               Text('个人中心')
-                .fontSize(24)
-                .fontFamily('alibaba')
+                .fontSize($r('app.float.font_size_display'))
                 .fontWeight(FontWeight.Bold)
-                .fontColor(Color.White)
-                .opacity(0.9)
+                .fontColor($r('app.color.text_on_brand'))
+
+              Text('账号管理与偏好设置')
+                .fontSize($r('app.float.font_size_body'))
+                .fontColor('#D6FFFFFF')
             }
             .width('100%')
-            .justifyContent(FlexAlign.Center) // 居中标题更像APP
-            .padding({ top: 44, bottom: 10 })
+            .alignItems(HorizontalAlign.Start)
+            .padding({ top: 46, left: 6 })
 
-            // 用户信息卡片 (浮动感更强)
+            // 用户信息卡（外层 Column 用于承载 .margin，ArkTS 不允许在带内容块的自定义组件后链式调用通用 modifier）
             Column() {
-              Row() {
-                // 头像区
-                Stack({ alignContent: Alignment.BottomEnd }) {
-                  // 外发光光晕
-                  Circle({ width: 94, height: 94 })
-                    .fillOpacity(0)
-                    .border({ width: 1, color: 'rgba(255,255,255,0.3)' })
-                    .margin({ bottom: 2, right: 2 }) // 微调对齐
+              SurfaceCard({ contentPadding: 18, radius: 24, emphasized: true }) {
+                Column({ space: 14 }) {
+                  Row() {
+                  Stack({ alignContent: Alignment.BottomEnd }) {
+                    Circle()
+                      .width(98)
+                      .height(98)
+                      .fill('#142573E6')
+                      .border({ width: 1, color: '#332274FF' })
 
-                  Image(this.getAvatarSrc())
-                    .width(90)
-                    .height(90)
-                    .borderRadius(45)
-                    .border({ width: 4, color: 'rgba(255,255,255,0.6)' }) // 半透明边框
-                    .objectFit(ImageFit.Cover)
-                    .backgroundColor('#F0F0F0')
+                    Image(this.getAvatarSrc())
+                      .width(90)
+                      .height(90)
+                      .borderRadius(45)
+                      .objectFit(ImageFit.Cover)
+                      .border({ width: 3, color: $r('app.color.surface_card_solid') })
+                      .backgroundColor($r('app.color.brand_primary_subtle'))
 
-                  if (!this.isLogin) {
-                    Circle({ width: 26, height: 26 })
-                      .fill('#FF4D4F')
-                      .border({ width: 3, color: Color.White })
-                      .overlay('!', { align: Alignment.Center, offset: { x: 0, y: 1 } })
-                  }
-                }
-                .onClick(() => !this.isLogin && this.pathStack.pushPathByName('Login', null))
-
-                // 文字区
-                Column({ space: 8 }) {
-                  Row({ space: 8 }) {
-                    Text(this.username)
-                      .fontSize(26)
-                      .fontWeight(FontWeight.Bold)
-                      .fontFamily('alibaba')
-                      .fontColor(Color.White)
-                      .maxLines(1)
-                      .textOverflow({ overflow: TextOverflow.Ellipsis })
-                      .shadow({ radius: 5, color: 'rgba(0,0,0,0.1)', offsetY: 2 })
-
-                    if (this.isLogin) {
-                      Image($r('sys.media.ohos_ic_public_edit'))
-                        .width(16)
-                        .height(16)
-                        .fillColor('rgba(255,255,255,0.8)')
-                        .onClick(() => this.showEditUsernameDialog())
+                    if (!this.isLogin) {
+                      Circle()
+                        .width(24)
+                        .height(24)
+                        .fill($r('app.color.state_danger'))
+                        .border({ width: 2, color: $r('app.color.surface_card_solid') })
+                        .overlay('!', { align: Alignment.Center, offset: { x: 0, y: 1 } })
                     }
                   }
-
-                  Text(this.isLogin ? `ID: ${this.account}` : '登录体验更多功能')
-                    .fontSize(14)
-                    .fontColor('rgba(255,255,255,0.7)')
-                    .fontFamily('alibaba')
-                    .backgroundColor('rgba(0,0,0,0.1)') // 文字背景胶囊
-                    .padding({ left: 10, right: 10, top: 4, bottom: 4 })
-                    .borderRadius(12)
-                }
-                .alignItems(HorizontalAlign.Start)
-                .margin({ left: 20 })
-                .layoutWeight(1)
-
-                // 箭头
-                if (!this.isLogin) {
-                  Image($r('sys.media.ohos_ic_public_arrow_right'))
-                    .width(20)
-                    .height(20)
-                    .fillColor('rgba(255,255,255,0.6)')
-                }
-              }
-              .width('100%')
-              .alignItems(VerticalAlign.Center)
-            }
-            .width('100%')
-            .padding({ left: 24, right: 24, bottom: 50, top: 20 })
-
-            // 菜单列表
-            Column() {
-              ForEach(this.item_array, (item: Items, index: number) => {
-                Row() {
-                  Row({ space: 16 }) {
-                    // 图标容器
-                    Stack({ alignContent: Alignment.Center }) {
-                      Circle({ width: 40, height: 40 })
-                        .fill(index === 0 ? '#E8F3FF' : '#FFF0F0') // 不同颜色的底色
-
-                      Image(item.icon_src)
-                        .width(20)
-                        .height(20)
-                        // 根据索引给不同颜色
-                        .fillColor(index === 0 ? '#1677FF' : '#FF4D4F')
+                  .onClick(() => {
+                    if (!this.isLogin) {
+                      this.goRootLogin(true)
                     }
+                  })
 
-                    Column({ space: 4 }) {
-                      Text(item.str_row1)
-                        .fontSize(16)
-                        .fontWeight(FontWeight.Medium)
-                        .fontColor('#1A1A1A')
-                        .fontFamily('alibaba')
+                  Column({ space: 8 }) {
+                    Row({ space: 8 }) {
+                      Text(this.username)
+                        .fontSize(24)
+                        .fontWeight(FontWeight.Bold)
+                        .fontColor($r('app.color.text_primary'))
+                        .maxLines(1)
+                        .textOverflow({ overflow: TextOverflow.Ellipsis })
 
-                      if (item.str_row2) {
-                        Text(item.str_row2)
-                          .fontSize(12)
-                          .fontColor('#999')
-                          .fontFamily('alibaba')
+                      if (this.isLogin) {
+                        Image($r('sys.media.ohos_ic_public_edit'))
+                          .width(16)
+                          .height(16)
+                          .fillColor($r('app.color.text_secondary'))
+                          .onClick(() => this.showEditUsernameDialog())
                       }
                     }
-                    .alignItems(HorizontalAlign.Start)
-                  }
 
-                  Image($r('sys.media.ohos_ic_public_arrow_right'))
-                    .width(16)
-                    .height(16)
-                    .fillColor('#CCCCCC')
+                    Text(this.isLogin ? `ID: ${this.account}` : '登录后可同步头像和设置')
+                      .fontSize($r('app.float.font_size_body'))
+                      .fontColor($r('app.color.text_secondary'))
+                      .maxLines(1)
+
+                    StatusChip({
+                      label: this.isLogin ? '已登录' : '未登录',
+                      tone: this.isLogin ? ChipTone.Success : ChipTone.Warning,
+                      showDot: true
+                    })
+                  }
+                  .alignItems(HorizontalAlign.Start)
+                  .layoutWeight(1)
+                  .margin({ left: 16 })
+
+                  if (!this.isLogin) {
+                    Image($r('sys.media.ohos_ic_public_arrow_right'))
+                      .width(18)
+                      .height(18)
+                      .fillColor($r('app.color.text_tertiary'))
+                  }
                 }
                 .width('100%')
-                .padding({ left: 16, right: 16, top: 16, bottom: 16 })
-                .justifyContent(FlexAlign.SpaceBetween)
-                // 添加按压动效
-                .stateStyles({
-                  normal: this.listItemNormal,
-                  pressed: this.listItemPressed
+                .alignItems(VerticalAlign.Center)
+
+                // 状态条
+                Row({ space: 10 }) {
+                  Row({ space: 8 }) {
+                    Circle()
+                      .width(8)
+                      .height(8)
+                      .fill(this.isLogin ? $r('app.color.state_success') : $r('app.color.state_warning'))
+
+                    Text(this.isLogin ? '账号状态正常' : '请先完成登录')
+                      .fontSize($r('app.float.font_size_body'))
+                      .fontColor($r('app.color.text_secondary'))
+                  }
+                  .layoutWeight(1)
+                  .height(42)
+                  .justifyContent(FlexAlign.Center)
+                  .backgroundColor($r('app.color.brand_primary_subtle'))
+                  .borderRadius(14)
+
+                  Row({ space: 8 }) {
+                    Circle()
+                      .width(8)
+                      .height(8)
+                      .fill($r('app.color.brand_primary'))
+
+                    Text('偏好配置已同步')
+                      .fontSize($r('app.float.font_size_body'))
+                      .fontColor($r('app.color.text_secondary'))
+                  }
+                  .layoutWeight(1)
+                  .height(42)
+                  .justifyContent(FlexAlign.Center)
+                  .backgroundColor($r('app.color.brand_primary_subtle'))
+                  .borderRadius(14)
+                }
+                .width('100%')
+              }
+            }
+            }
+            .margin({ top: -16 })
+
+            // 外观设置（新增：深色模式开关）
+            SectionTitle({ title: '外观' })
+            SurfaceCard({ contentPadding: 6, radius: 18 }) {
+              Row() {
+                ForEach(this.themeOptions, (opt: ThemeOption) => {
+                  Column() {
+                    Text(opt.label)
+                      .fontSize($r('app.float.font_size_body'))
+                      .fontWeight(this.colorMode === opt.value ? FontWeight.Bold : FontWeight.Normal)
+                      .fontColor(this.colorMode === opt.value
+                        ? $r('app.color.brand_primary')
+                        : $r('app.color.text_secondary'))
+                  }
+                  .layoutWeight(1)
+                  .height(40)
+                  .justifyContent(FlexAlign.Center)
+                  .backgroundColor(this.colorMode === opt.value
+                    ? $r('app.color.brand_primary_subtle')
+                    : Color.Transparent)
+                  .borderRadius(14)
+                  .onClick(() => this.applyColorMode(opt.value))
                 })
-                .animation({ duration: 200 })
-                .onClick(() => {
-                  if (this.isLogin || item.to_page === 'About') {
-                    this.pathStack.pushPathByName(item.to_page, null)
-                  } else {
-                    promptAction.showToast({ message: '请先登录' })
-                    this.pathStack.pushPathByName('Login', null)
+              }
+              .width('100%')
+            }
+
+            // 菜单
+            SectionTitle({ title: '更多' })
+            SurfaceCard({ contentPadding: 0, radius: 24 }) {
+              Column() {
+                ForEach(this.menuItems, (item: MenuItem, index: number) => {
+                  Row() {
+                    Row({ space: 14 }) {
+                      IconBadge({
+                        icon: item.iconSrc,
+                        bgColor: this.resolveTokenColor(item.iconBgKey),
+                        iconColor: this.resolveTokenColor(item.iconColorKey),
+                        badgeSize: 42,
+                        iconSize: 20
+                      })
+
+                      Column({ space: 4 }) {
+                        Text(item.title)
+                          .fontSize($r('app.float.font_size_subtitle'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('app.color.text_primary'))
+
+                        Text(item.subtitle)
+                          .fontSize($r('app.float.font_size_caption'))
+                          .fontColor($r('app.color.text_secondary'))
+                      }
+                      .alignItems(HorizontalAlign.Start)
+                    }
+
+                    Image($r('sys.media.ohos_ic_public_arrow_right'))
+                      .width(16)
+                      .height(16)
+                      .fillColor($r('app.color.text_tertiary'))
+                  }
+                  .width('100%')
+                  .padding({ left: 16, right: 16, top: 16, bottom: 16 })
+                  .justifyContent(FlexAlign.SpaceBetween)
+                  .onClick(() => this.openMenu(item))
+
+                  if (index < this.menuItems.length - 1) {
+                    Divider()
+                      .color($r('app.color.divider'))
+                      .strokeWidth(1)
+                      .margin({ left: 72, right: 16 })
                   }
                 })
-
-                // 隐形分割线，只在中间显示，且左右留白
-                if (index < this.item_array.length - 1) {
-                  Divider()
-                    .color('#FAFAFA') // 非常淡
-                    .strokeWidth(1)
-                    .margin({ left: 72, right: 16 })
-                }
-              })
+              }
             }
-            .cardStyle()
-            .margin({ top: -30 }) // 向上插入背景
 
-            // 退出按钮
+            // 退出登录
             if (this.isLogin) {
               Button('退出登录')
-                .width('92%')
+                .width('100%')
                 .height(50)
-                .backgroundColor(Color.White)
-                .fontColor('#FF4D4F')
-                .fontSize(16)
+                .backgroundColor($r('app.color.state_danger_subtle'))
+                .fontColor($r('app.color.state_danger'))
+                .fontSize($r('app.float.font_size_subtitle'))
                 .fontWeight(FontWeight.Medium)
-                .fontFamily('alibaba')
-                .borderRadius(25)
-                .margin({ top: 20, bottom: 40 })
-                .shadow({ radius: 20, color: 'rgba(255, 77, 79, 0.1)', offsetY: 5 }) // 带颜色的阴影
-                .stateEffect(true) // 开启原生点击效果
-                .onClick(() => {
-                  // 清理逻辑...
-                  this.account = 0; this.password = ''; this.username = '请先登录';
-                  this.avatar = 1; this.isLogin = false;
-                  AppStorage.setOrCreate('avatar', 1)
-                  this.pathStack.pushPathByName('Login', null, true)
-                })
+                .borderRadius(16)
+                .margin({ top: 6, bottom: 6 })
+                .onClick(() => this.logout())
             }
           }
-          .width('100%')
+          .width(isTablet(this.pageWidth) ? 760 : '100%')
+          .align(Alignment.Center)
+          .padding({
+            left: isTablet(this.pageWidth) ? 0 : 16,
+            right: isTablet(this.pageWidth) ? 0 : 16,
+            top: isTablet(this.pageWidth) ? 18 : 6,
+            bottom: 28
+          })
           .constraintSize({ minHeight: '100%' })
+          .justifyContent(FlexAlign.SpaceAround)
         }
         .scrollBar(BarState.Off)
-        .edgeEffect(EdgeEffect.Spring) // iOS风格回弹
+        .edgeEffect(EdgeEffect.Spring)
         .width('100%')
         .height('100%')
 
-        // ============================================================
-        // 3. 弹窗 (Glassmorphism 风格)
-        // ============================================================
+        // 改名弹窗
         if (this.showDialog) {
           Stack() {
-            // 蒙层
             Column()
               .width('100%')
               .height('100%')
-              .backgroundColor('rgba(0,0,0,0.4)')
-              .backdropBlur(5) // 背景模糊
+              .backgroundColor($r('app.color.overlay_bg'))
               .onClick(() => this.showDialog = false)
-              .transition(TransitionEffect.OPACITY.animation({ duration: 300 }))
 
-            // 弹窗主体
-            Column() {
+            Column({ space: 18 }) {
               Text('修改昵称')
-                .fontSize(18)
+                .fontSize(19)
                 .fontWeight(FontWeight.Bold)
-                .fontFamily('alibaba')
-                .margin({ bottom: 20, top: 8 })
+                .fontColor($r('app.color.text_primary'))
 
               TextInput({ text: this.tempUsername, placeholder: '请输入新昵称' })
                 .width('100%')
-                .height(48)
-                .backgroundColor('#F7F8FA')
+                .height(46)
+                .backgroundColor($r('app.color.input_bg'))
                 .borderRadius(10)
-                .padding({ left: 16 })
+                .padding({ left: 14, right: 14 })
+                .fontColor($r('app.color.text_primary'))
+                .placeholderColor($r('app.color.text_tertiary'))
                 .onChange((val) => this.tempUsername = val)
-                .defaultFocus(true) // 自动聚焦
+                .defaultFocus(true)
 
               Row({ space: 12 }) {
                 Button('取消')
                   .layoutWeight(1)
                   .height(40)
-                  .backgroundColor('#F0F2F5')
-                  .fontColor('#666')
                   .fontSize(15)
+                  .fontColor($r('app.color.text_secondary'))
+                  .backgroundColor($r('app.color.input_bg'))
                   .borderRadius(20)
                   .onClick(() => this.showDialog = false)
 
                 Button('保存')
                   .layoutWeight(1)
                   .height(40)
-                  // 渐变色按钮
-                  .linearGradient({
-                    angle: 90,
-                    colors: [['#4FACFE', 0], ['#00F2FE', 1]]
-                  })
-                  .fontColor(Color.White)
                   .fontSize(15)
+                  .fontColor($r('app.color.text_on_brand'))
+                  .backgroundColor($r('app.color.brand_primary'))
                   .borderRadius(20)
                   .onClick(() => this.confirmChangeUsername())
               }
-              .margin({ top: 24 })
               .width('100%')
             }
-            .width('80%')
-            .backgroundColor(Color.White)
+            .width(isTablet(this.pageWidth) ? 420 : '82%')
+            .padding(22)
+            .backgroundColor($r('app.color.surface_card_solid'))
             .borderRadius(20)
-            .padding(24)
-            .shadow({ radius: 30, color: 'rgba(0,0,0,0.15)', offsetY: 10 })
-            .transition(TransitionEffect.scale({ x: 0.9, y: 0.9 }).animation({ duration: 300, curve: Curve.FastOutSlowIn }))
+            .transition(TransitionEffect.scale({ x: 0.9, y: 0.9 }).animation({ duration: 220 }))
           }
           .width('100%')
           .height('100%')
@@ -422,7 +549,13 @@ export struct Personal {
           .zIndex(999)
         }
       }
-      .backgroundColor('#F5F6F8') // 全局背景微调
+      .backgroundColor($r('app.color.page_bg_alt'))
+      .onAreaChange((oldValue: Area, newValue: Area): void => {
+        const width: number = Number(newValue.width)
+        if (!Number.isNaN(width)) {
+          this.pageWidth = width
+        }
+      })
     }
     .hideTitleBar(true)
   }

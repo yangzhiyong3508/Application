@@ -7,11 +7,11 @@
         "material": {
           "certpath": "C:\\Users\\30902\\.ohos\\config\\default_Application_KshlfVgbwGcN83d-EBDBdp3h8ARar4ue59czBzy-YB8=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B08265C5D86E0E4E38D6D18DFDBFE64CCF16C72B97F98F924D8600CA28412F684830B3047532EAF",
+          "keyPassword": "0000001BF2FE6C5DD2C3ED028695ED3B8900627C6F4BF7539CF4AF463D284A8D3DD75DA4E9D940611FC4CA",
           "profile": "C:\\Users\\30902\\.ohos\\config\\default_Application_KshlfVgbwGcN83d-EBDBdp3h8ARar4ue59czBzy-YB8=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "C:\\Users\\30902\\.ohos\\config\\default_Application_KshlfVgbwGcN83d-EBDBdp3h8ARar4ue59czBzy-YB8=.p12",
-          "storePassword": "0000001BEA60CB8580AEA2F9F4E2C1138972360C8C41BB8D3E2008A8F396279DCE6259388DE6939852C3D2"
+          "storePassword": "0000001B63BA017A2093B7790902800E26B69679331B981E54C92D6E25F7D95ED74EDC1460683162F45BFA"
         }
       }
     ],
@@ -20,7 +20,7 @@
         "name": "default",
         "signingConfig": "default",
         "targetSdkVersion": "5.1.1(19)",
-        "compatibleSdkVersion": "5.0.5(17)",
+        "compatibleSdkVersion": "5.0.0(12)",
         "runtimeOS": "HarmonyOS",
         "buildOption": {
           "strictMode": {

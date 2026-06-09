@@ -44,6 +44,7 @@ export class UpdateWakeWordUtil {
         if (result > 0) {
           // ✅ 同步到 AppStorage，保证前端全局状态更新
           AppStorage.setOrCreate('wakeWord', wakeWord)
+          AppStorage.setOrCreate('petName', wakeWord)
           return { success: true, msg: '唤醒词修改成功' }
         } else {
           return { success: false, msg: '唤醒词修改失败' }

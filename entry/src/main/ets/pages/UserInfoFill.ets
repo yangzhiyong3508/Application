@@ -5,7 +5,8 @@ import { CosHelper } from '../utils/PhotoUploadUtil'
 import { RegisterUtil } from '../utils/RegisterUtil'
 import { RegisterParams } from './Register'
 import common from '@ohos.app.ability.common'
-import { font } from '@kit.ArkUI'
+import { PrimaryButton } from '../components/PrimaryButton'
+import { isTablet } from '../theme/Theme'
 
 @Builder
 export function UserInfoFillBuilder() {
@@ -21,10 +22,11 @@ struct UserInfoFill {
   private pass: string = ''
 
   @State nickname: string = ''
-  @State wakeWord: string = '你好小狗'
+  @State wakeWord: string = '小E'
   @State avatarPreview: string = ''
   @State isUploading: boolean = false
   @State isSubmitting: boolean = false
+  @State pageWidth: number = 0
 
   private pickerUtil: PhotoPickerUtil = new PhotoPickerUtil()
 
@@ -37,8 +39,8 @@ struct UserInfoFill {
       context,
       "ap-nanjing",
       "edog-avatar-1361772203",
-      "***",
-      "***"
+      "",
+      ""
     )
   }
 
@@ -87,11 +89,7 @@ struct UserInfoFill {
         this.globalAccount = Number(this.acc)
         this.globalPassword = this.pass
 
-        // 注册成功后，跳转回 Login 页面，而不是 Index
-        setTimeout(() => {
-          // 清除路由栈直到 Login（或者直接 push Login，取决于架构）
-          // 这里我们简单起见，直接退回上一页（Register），再退回 Login
-          // 或者直接使用 clear() 然后 push Login
+        setTimeout((): void => {
           this.pathStack.clear()
           this.pathStack.pushPath({ name: "Login" })
         }, 1500)
@@ -108,45 +106,66 @@ struct UserInfoFill {
   build() {
     NavDestination() {
       Column() {
+        // 返回按钮
+        Row() {
+          Image($r('app.media.arrow_return'))
+            .width(24)
+            .height(24)
+            .fillColor($r('app.color.text_primary'))
+            .onClick(() => this.pathStack.pop())
+        }
+        .width('100%')
+        .padding({ left: 20, top: 20 })
+        .justifyContent(FlexAlign.Start)
+
         // 标题
         Text("完善个人信息")
           .fontSize(28)
-          .fontWeight(600)
-          .fontFamily("alibaba")
-          .margin({ top: 40, bottom: 40 })
+          .fontWeight(FontWeight.Bold)
+          .fontColor($r('app.color.text_primary'))
+          .margin({ top: 20, bottom: 40 })
 
         // 头像上传区
         Column() {
           Stack({ alignContent: Alignment.Center }) {
-            // 外层呼吸光环 (仅上传时显示)
             if (this.isUploading) {
               Circle({ width: 110, height: 110 })
                 .fill(Color.Transparent)
                 .strokeWidth(2)
-                .stroke('#1C6AEB')
+                .stroke($r('app.color.brand_primary'))
                 .opacity(0.5)
-              // 这里可以加个动画
             }
 
             if (this.avatarPreview) {
               Image(this.avatarPreview)
-                .width(100).height(100)
+                .width(100)
+                .height(100)
                 .borderRadius(50)
                 .objectFit(ImageFit.Cover)
-                .border({ width: 2, color: '#1C6AEB' })
+                .border({ width: 2, color: $r('app.color.brand_primary') })
             } else {
-              Circle({ width: 100, height: 100 }).fill("#F0F0F0")
+              Circle({ width: 100, height: 100 }).fill($r('app.color.input_bg'))
               Column() {
-                Image($r('sys.media.ohos_ic_public_add')) // 加号图标
-                  .width(30).height(30).fillColor('#999')
-                Text("上传头像").fontSize(12).fontColor("#999").margin({top: 5})
+                Image($r('sys.media.ohos_ic_public_add'))
+                  .width(30)
+                  .height(30)
+                  .fillColor($r('app.color.text_tertiary'))
+
+                Text("上传头像")
+                  .fontSize($r('app.float.font_size_caption'))
+                  .fontColor($r('app.color.text_tertiary'))
+                  .margin({ top: 5 })
               }
             }
           }
-          .onClick(() => { if(!this.isUploading) this.pickAvatar() })
+          .onClick(() => {
+            if (!this.isUploading) this.pickAvatar()
+          })
 
           Text(this.isUploading ? "正在上传..." : "点击上方图标上传头像")
-            .fontSize(14).fontColor("#999").margin({ top: 12 })
+            .fontSize($r('app.float.font_size_body'))
+            .fontColor($r('app.color.text_tertiary'))
+            .margin({ top: 12 })
         }
         .margin({ bottom: 40 })
 
@@ -160,51 +179,68 @@ struct UserInfoFill {
             .width("85%")
             .height(55)
             .borderRadius(12)
-            .backgroundColor("#F7F9FC")
+            .backgroundColor($r('app.color.input_bg'))
+            .border({ width: 1, color: $r('app.color.input_border') })
             .padding({ left: 16 })
+            .fontColor($r('app.color.text_primary'))
+            .placeholderColor($r('app.color.text_tertiary'))
 
           TextInput({
-            placeholder: "设置唤醒词 (默认: 你好小狗)",
+            placeholder: "设置唤醒词 (默认: 小E)",
             text: this.wakeWord
           })
             .onChange((v: string) => this.wakeWord = v)
             .width("85%")
             .height(55)
             .borderRadius(12)
-            .backgroundColor("#F7F9FC")
+            .backgroundColor($r('app.color.input_bg'))
+            .border({ width: 1, color: $r('app.color.input_border') })
             .padding({ left: 16 })
+            .fontColor($r('app.color.text_primary'))
+            .placeholderColor($r('app.color.text_tertiary'))
         }
         .width("100%")
         .alignItems(HorizontalAlign.Center)
         .margin({ bottom: 50 })
 
-        Button(this.isSubmitting ? "正在注册..." : "完成注册")
-          .width("85%")
-          .height(56)
-          .borderRadius(28)
-          .backgroundColor(this.isSubmitting ? "#8FB5F5" : "#1C6AEB")
-          .enabled(!this.isSubmitting)
-          .fontSize(18)
-          .fontWeight(FontWeight.Bold)
-          .shadow({ radius: 10, color: 'rgba(28, 106, 235, 0.4)', offsetY: 5 })
-          .onClick(() => this.handleSubmit())
+        // 提交按钮
+        Column() {
+          PrimaryButton({
+            text: '完成注册',
+            loading: this.isSubmitting,
+            loadingText: '正在注册...',
+            btnHeight: 56,
+            onTap: (): void => {
+              this.handleSubmit()
+            }
+          })
+        }
+        .width('85%')
       }
-      .width("100%")
+      .width(isTablet(this.pageWidth) ? 520 : "100%")
+      .align(Alignment.Center)
       .height("100%")
-      .backgroundColor(Color.White)
+      .padding({
+        left: isTablet(this.pageWidth) ? 0 : 16,
+        right: isTablet(this.pageWidth) ? 0 : 16
+      })
+      .backgroundColor($r('app.color.surface_card_solid'))
+      .onAreaChange((oldValue: Area, newValue: Area): void => {
+        const width: number = Number(newValue.width)
+        if (!Number.isNaN(width)) {
+          this.pageWidth = width
+        }
+      })
     }
     .hideTitleBar(true)
     .onReady(context => {
       this.pathStack = context.pathStack
-      // 获取路由参数
       const params = this.pathStack.getParamByName("UserInfoFill")[0] as RegisterParams
       if (params) {
         this.acc = params.uname
         this.pass = params.upass
       }
-      try {
-        font.registerFont({ familyName: "alibaba", familySrc: $rawfile('AlimamaDongFangDaKai-Regular.otf') })
-      } catch (e) {}
+      // 字体注册已统一移至 EntryAbility.onCreate
     })
   }
 }

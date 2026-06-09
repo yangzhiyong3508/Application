@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG minimal solid badge</title>
+  <desc id="desc">A minimal solid badge with dog ear and sound dot.</desc>
+  <rect width="1024" height="1024" rx="224" fill="#FAF7F2"/>
+  <path fill="#222222" d="M512 176c168 0 304 136 304 304v52c0 168-136 304-304 304S208 700 208 532v-52c0-168 136-304 304-304Z"/>
+  <path fill="#FAF7F2" d="M388 278 304 158c-18-26 12-58 40-44l174 90c-48 8-92 34-130 74Zm248 0 84-120c18-26 58-4 46 26l-62 154c-18-24-40-44-68-60Z"/>
+  <circle cx="408" cy="468" r="38" fill="#FAF7F2"/>
+  <circle cx="616" cy="468" r="38" fill="#FAF7F2"/>
+  <path fill="#FAF7F2" d="M468 558h88c22 0 34 26 18 42l-44 46a34 34 0 0 1-50 0l-44-46c-16-16-4-42 32-42Z"/>
+  <path fill="#17A398" d="M748 448a72 72 0 1 1-1 0Z"/>
+  <path fill="#F26A2E" d="M790 332c70 48 112 126 112 214a28 28 0 1 1-56 0c0-68-32-130-88-168a28 28 0 1 1 32-46Z"/>
+</svg>

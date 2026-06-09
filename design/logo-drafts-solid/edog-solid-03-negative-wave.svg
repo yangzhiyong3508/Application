@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG negative wave logo</title>
+  <desc id="desc">A solid round dog mark with negative-space sound wave.</desc>
+  <rect width="1024" height="1024" rx="224" fill="#FFFFFF"/>
+  <circle cx="512" cy="530" r="310" fill="#F47B20"/>
+  <path fill="#F47B20" d="M340 310 270 192c-16-28 18-58 44-38l154 116Zm344 0 70-118c16-28 58-10 50 22l-42 174Z"/>
+  <circle cx="402" cy="456" r="34" fill="#FFFFFF"/>
+  <circle cx="622" cy="456" r="34" fill="#FFFFFF"/>
+  <path fill="#FFFFFF" d="M468 540h88c20 0 31 24 18 39l-44 49a30 30 0 0 1-45 0l-44-49c-14-15-2-39 27-39Z"/>
+  <path fill="#FFFFFF" d="M710 536c0-38-20-72-50-92a26 26 0 0 1 29-44c45 30 75 82 75 136s-30 106-75 136a26 26 0 0 1-29-44c30-20 50-54 50-92Z"/>
+  <path fill="#FFFFFF" d="M802 536c0-72-37-136-94-172a26 26 0 1 1 28-44c72 46 120 126 120 216s-48 170-120 216a26 26 0 1 1-28-44c57-36 94-100 94-172Z"/>
+</svg>

@@ -1,7 +1,8 @@
 import { Control } from './Control'
-import { font, curves } from "@kit.ArkUI";
-import { Conversation } from "./Conversation";
-import { Personal } from "./Personal";
+import { curves } from "@kit.ArkUI"
+import { Conversation } from "./Conversation"
+import { Personal } from "./Personal"
+import { AppShadow, isTablet } from '../theme/Theme'
 
 @Builder
 export function IndexBuilder() {
@@ -16,8 +17,9 @@ interface TabClass {
 @Entry
 @Component
 struct Index {
-  @Provide('pathStack') pathStack: NavPathStack = new NavPathStack();
-  @State currentIndex: number = 0;
+  @Provide('pathStack') pathStack: NavPathStack = new NavPathStack()
+  @State currentIndex: number = 0
+  @State pageWidth: number = 0
 
   // 必须使用 Controller 来控制 Tabs 跳转
   private controller: TabsController = new TabsController()
@@ -26,110 +28,114 @@ struct Index {
   @StorageLink('isLogin') isLogin: boolean = false
 
   private readonly tabData: TabClass[] = [
-    { text: '智控', icon: $r('app.media.control') },
-    { text: '对话', icon: $r('app.media.conservation') },
+    { text: '控制', icon: $r('app.media.control') },
+    { text: '陪伴', icon: $r('app.media.conservation') },
     { text: '我的', icon: $r('app.media.personal') },
   ]
 
-  // 配色配置
-  private readonly activeColor: string = '#4158D0' // 选中文字颜色
-  private readonly inactiveColor: string = '#999999' // 未选中文字颜色
-  private readonly sliderColor: string = '#E6F0FF' // 滑块背景色（浅蓝）
+  private ensureLoginRequired(): void {
+    if (!this.isLogin) {
+      this.pathStack.clear()
+      this.pathStack.pushPath({ name: 'Login' }, false)
+    }
+  }
+
+  onPageShow(): void {
+    this.ensureLoginRequired()
+  }
 
   build() {
     Navigation(this.pathStack) {
-      // 使用 Stack 堆叠布局：底层是 Tabs 内容，顶层是悬浮的自定义 TabBar
+      // 底层 Tabs + 顶层悬浮 TabBar
       Stack({ alignContent: Alignment.Bottom }) {
-
         // 1. 主要内容区域 (Tabs)
         Tabs({ barPosition: BarPosition.End, controller: this.controller }) {
           TabContent() {
             Control()
           }
-          .backgroundColor('#F5F6F8')
+          .backgroundColor($r('app.color.page_bg'))
 
           TabContent() {
             Conversation()
           }
-          .backgroundColor('#F5F6F8')
+          .backgroundColor($r('app.color.page_bg'))
 
           TabContent() {
             Personal()
           }
-          .backgroundColor('#F5F6F8')
+          .backgroundColor($r('app.color.page_bg'))
         }
-        .barHeight(0) // ⚠️ 关键：隐藏原生 TabBar，完全交给我们自定义的来接管
-        .scrollable(true) // 允许手势滑动切换
+        .barHeight(0)
+        .scrollable(false)
         .animationDuration(300)
         .onChange((index: number) => {
-          // 页面滑动时，同步更新 currentIndex，触发底部滑块动画
           animateTo({
-            curve: curves.springCurve(10, 1, 228, 30) // 物理弹簧曲线
+            curve: curves.springCurve(10, 1, 228, 30)
           }, () => {
             this.currentIndex = index
           })
         })
-        .margin({ bottom: 80 }) // ⚠️ 关键：给底部留出 80vp 的空间，防止内容被自定义 Bar 遮挡
+        .margin({ bottom: 92 })
 
         // 2. 自定义悬浮 TabBar
         Stack() {
-          // 2.1 背景层 (纯白卡片 + 阴影)
+          // 2.1 背景层
           Row()
             .width('100%')
             .height('100%')
-            .backgroundColor(Color.White)
-            .borderRadius({ topLeft: 24, topRight: 24 }) // 顶部圆角
-            .shadow({ radius: 30, color: 'rgba(0,0,0,0.08)', offsetY: -5 })
+            .backgroundColor($r('app.color.surface_card_solid'))
+            .borderRadius(26)
+            .border({ width: 1, color: $r('app.color.surface_border') })
+            .shadow(AppShadow.bottomBar)
 
-          // 2.2 核心动画层：滑块 (Sliding Block)
-          // 根据 currentIndex 计算位置
+          // 2.2 滑块层
           Row() {
             Column() {
-              // 滑块本体（胶囊形状）
               Column()
-                .width('90%')
-                .height('85%')
-                .backgroundColor(this.sliderColor) // 浅蓝色背景
-                .borderRadius(20)
+                .width('88%')
+                .height('76%')
+                .backgroundColor($r('app.color.brand_primary_subtle'))
+                .borderRadius(22)
             }
-            .width('33.3%') // 3个Tab，每个占 1/3
+            .width('33.3%')
             .height('100%')
             .justifyContent(FlexAlign.Center)
             .alignItems(HorizontalAlign.Center)
-            .padding(8) // 内边距，让滑块别填太满
-            .translate({ x: `${this.currentIndex * 100}%` }) // 📍 核心位移逻辑：0%, 100%, 200%
+            .padding(8)
+            .translate({ x: `${this.currentIndex * 100}%` })
           }
           .width('100%')
           .height('100%')
-          // 这里的 Row 必须左对齐，才能让 translate 正确工作
           .alignItems(VerticalAlign.Top)
           .justifyContent(FlexAlign.Start)
-          .hitTestBehavior(HitTestMode.None) // 穿透点击，让下层能响应（虽然这里不需要，但习惯加上）
+          .hitTestBehavior(HitTestMode.None)
 
-          // 2.3 前景交互层：图标和文字
+          // 2.3 图标 + 文字层
           Row() {
             ForEach(this.tabData, (item: TabClass, index: number) => {
               Column({ space: 6 }) {
                 Image(item.icon)
-                  .width(32) // 🔥 放大图标
-                  .height(32)
-                  .fillColor(this.currentIndex === index ? this.activeColor : this.inactiveColor)
-                  .animation({ duration: 300 }) // 图标变色动画
+                  .width(this.currentIndex === index ? 30 : 28)
+                  .height(this.currentIndex === index ? 30 : 28)
+                  .fillColor(this.currentIndex === index
+                    ? $r('app.color.brand_primary')
+                    : $r('app.color.text_tertiary'))
+                  .animation({ duration: 300 })
                   .objectFit(ImageFit.Contain)
 
                 Text(item.text)
-                  .fontFamily('alibaba')
-                  .fontSize(14) // 🔥 放大字体
+                  .fontSize(13)
                   .fontWeight(this.currentIndex === index ? FontWeight.Bold : FontWeight.Medium)
-                  .fontColor(this.currentIndex === index ? this.activeColor : this.inactiveColor)
+                  .fontColor(this.currentIndex === index
+                    ? $r('app.color.brand_primary')
+                    : $r('app.color.text_tertiary'))
                   .animation({ duration: 300 })
               }
-              .width('33.3%') // 等分宽度
+              .width('33.3%')
               .height('100%')
               .justifyContent(FlexAlign.Center)
               .alignItems(HorizontalAlign.Center)
               .onClick(() => {
-                // 点击时触发动画和切换
                 animateTo({
                   curve: curves.springCurve(10, 1, 228, 30)
                 }, () => {
@@ -141,30 +147,27 @@ struct Index {
           }
           .width('100%')
           .height('100%')
-
         }
-        .width('100%')
-        .height(88) // 🔥 整体加高 (包含底部安全区)
-        .padding({ bottom: 12 }) // 避开底部 Home 条
+        .width(isTablet(this.pageWidth) ? 500 : '92%')
+        .height(74)
+        .margin({ bottom: 12 })
       }
+      .width('100%')
+      .height('100%')
     }
     .width('100%')
     .height('100%')
     .hideTitleBar(true)
-    .backgroundColor('#F5F6F8')
+    .backgroundColor($r('app.color.page_bg'))
+    .onAreaChange((oldValue: Area, newValue: Area): void => {
+      const width: number = Number(newValue.width)
+      if (!Number.isNaN(width)) {
+        this.pageWidth = width
+      }
+    })
     .onAppear(() => {
-      try {
-        font.registerFont({
-          familyName: 'alibaba',
-          familySrc: $rawfile('AlimamaDongFangDaKai-Regular.otf')
-        })
-      } catch (e) {}
-
-      setTimeout(() => {
-        if (!this.isLogin) {
-          this.pathStack.pushPath({ name: 'Login' }, false)
-        }
-      }, 100)
+      // 字体注册已统一移至 EntryAbility.onCreate
+      this.ensureLoginRequired()
     })
   }
 }

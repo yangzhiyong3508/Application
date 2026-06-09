@@ -5,7 +5,9 @@
     "pages/Index",
     "pages/About",
     "pages/Command",
+    "pages/ChatHistory",
     "pages/Settings",
+    "pages/ServoAdjust",
     "pages/UserInfoFill"
   ]
 }

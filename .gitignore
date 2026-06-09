@@ -10,3 +10,9 @@
 /.clang-tidy
 **/.test
 /.appanalyzer
+
+# Local debug/capture artifacts that may contain tokens or API responses.
+/.playwright-mcp/
+/tmp-*
+/entry/src/main.zip
+/tools/*.log

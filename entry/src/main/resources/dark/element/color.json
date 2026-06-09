@@ -1,8 +1,49 @@
 {
   "color": [
-    {
-      "name": "start_window_background",
-      "value": "#000000"
-    }
+    { "name": "start_window_background", "value": "#FFFFFFFF" },
+
+    { "name": "brand_primary",           "value": "#FF1F8BFF" },
+    { "name": "brand_primary_pressed",   "value": "#FF0F6FE8" },
+    { "name": "brand_primary_disabled",  "value": "#FFAED5FF" },
+    { "name": "brand_primary_subtle",    "value": "#FFEAF5FF" },
+    { "name": "brand_gradient_start",    "value": "#FF27B5FF" },
+    { "name": "brand_gradient_end",      "value": "#FF1F78FF" },
+
+    { "name": "text_primary",            "value": "#FF17233C" },
+    { "name": "text_secondary",          "value": "#FF4E627D" },
+    { "name": "text_tertiary",           "value": "#FF7C8CA3" },
+    { "name": "text_on_brand",           "value": "#FFFFFFFF" },
+
+    { "name": "page_bg",                 "value": "#FFF7FAFF" },
+    { "name": "page_bg_alt",             "value": "#FFEFF7FF" },
+    { "name": "surface_card",            "value": "#FFFFFFFF" },
+    { "name": "surface_card_solid",      "value": "#FFFFFFFF" },
+    { "name": "surface_border",          "value": "#FFDCE9F7" },
+    { "name": "divider",                 "value": "#FFE5EEF8" },
+    { "name": "overlay_bg",              "value": "#5C173252" },
+
+    { "name": "input_bg",                "value": "#FFFFFFFF" },
+    { "name": "input_border",            "value": "#FFD4E4F5" },
+
+    { "name": "state_success",           "value": "#FF1BBF7A" },
+    { "name": "state_success_subtle",    "value": "#FFE8F8F1" },
+    { "name": "state_warning",           "value": "#FFFF9F2E" },
+    { "name": "state_warning_subtle",    "value": "#FFFFF4E6" },
+    { "name": "state_danger",            "value": "#FFFF5D4D" },
+    { "name": "state_danger_subtle",     "value": "#FFFFEFEC" },
+    { "name": "state_info",              "value": "#FF3D7BFF" },
+    { "name": "state_info_subtle",       "value": "#FFEAF1FF" },
+
+    { "name": "pet_action_feed",         "value": "#FFFFB068" },
+    { "name": "pet_action_play",         "value": "#FF92DE76" },
+    { "name": "pet_action_clean",        "value": "#FF7CB8FF" },
+    { "name": "pet_action_sleep",        "value": "#FFB69AFF" },
+    { "name": "pet_action_praise",       "value": "#FFBAA8FF" },
+    { "name": "pet_action_dress",        "value": "#FFFF99CA" },
+    { "name": "pet_action_rename",       "value": "#FFA0B6FF" },
+    { "name": "pet_action_reset",        "value": "#FF54DAD2" },
+
+    { "name": "pet_room_bg_top",         "value": "#FFF4FBFF" },
+    { "name": "pet_room_bg_bottom",      "value": "#FFE4F3FF" }
   ]
 }

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG abstract soundmark logo</title>
+  <desc id="desc">An abstract dog head formed by a sound wave.</desc>
+  <rect width="1024" height="1024" rx="216" fill="#F7FBFA"/>
+  <path d="M244 584c76-210 206-312 346-274 80 22 132 74 160 140 12 28 36 48 66 54l84 16-90 74c-52 42-118 66-186 66H416c-82 0-150-28-172-76Z" fill="none" stroke="#202124" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M426 322 380 218c-10-24 18-46 38-28l120 106" fill="none" stroke="#202124" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M608 420h2" fill="none" stroke="#202124" stroke-width="50" stroke-linecap="round"/>
+  <path d="M250 582c54-22 94-22 148 0s94 22 148 0 94-22 148 0" fill="none" stroke="#F27A1A" stroke-width="34" stroke-linecap="round"/>
+</svg>

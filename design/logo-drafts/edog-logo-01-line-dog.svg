@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG minimal line dog logo</title>
+  <desc id="desc">A minimal dog side profile with a small voice wave.</desc>
+  <rect width="1024" height="1024" rx="220" fill="#FFF8F0"/>
+  <path d="M294 544c0-132 96-232 232-232 84 0 148 34 194 94 22 28 48 40 84 38 24-2 38 26 22 44l-74 82c-38 42-92 66-150 66H468c-96 0-174-38-174-92Z" fill="none" stroke="#222222" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M448 320 404 224c-10-22 14-44 34-30l118 82" fill="none" stroke="#222222" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M618 426h2" fill="none" stroke="#222222" stroke-width="48" stroke-linecap="round"/>
+  <path d="M734 378c30 24 48 58 50 96M812 332c54 46 86 112 90 184" fill="none" stroke="#17A398" stroke-width="34" stroke-linecap="round"/>
+</svg>

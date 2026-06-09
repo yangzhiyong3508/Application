@@ -49,6 +49,22 @@
       }
     },
     {
+      "name": "ChatHistory",
+      "pageSourceFile": "src/main/ets/pages/ChatHistory.ets",
+      "buildFunction": "ChatHistoryBuilder",
+      "data": {
+        "description" : "this is ChatHistory"
+      }
+    },
+    {
+      "name": "ServoAdjust",
+      "pageSourceFile": "src/main/ets/pages/ServoAdjust.ets",
+      "buildFunction": "ServoAdjustBuilder",
+      "data": {
+        "description" : "this is ServoAdjust"
+      }
+    },
+    {
       "name": "UserInfoFill",
       "pageSourceFile": "src/main/ets/pages/UserInfoFill.ets",
       "buildFunction": "UserInfoFillBuilder",

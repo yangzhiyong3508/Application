@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG one stroke logo</title>
+  <desc id="desc">A one-stroke dog ear and face with a voice dot.</desc>
+  <rect width="1024" height="1024" rx="224" fill="#FFFCF7"/>
+  <path d="M292 572c0-124 82-226 204-254l-62-122c-10-20 14-40 34-28l168 104c92 58 150 154 150 260 0 92-74 166-166 166H468c-98 0-176-46-176-126Z" fill="none" stroke="#202124" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M614 430h2" fill="none" stroke="#202124" stroke-width="54" stroke-linecap="round"/>
+  <path d="M742 402c36 28 58 68 58 116" fill="none" stroke="#17A398" stroke-width="36" stroke-linecap="round"/>
+  <path d="M442 574c40 30 86 44 138 44" fill="none" stroke="#F27A1A" stroke-width="36" stroke-linecap="round"/>
+</svg>

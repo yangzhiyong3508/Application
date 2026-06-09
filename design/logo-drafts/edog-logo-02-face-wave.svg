@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">EDOG dog face voice logo</title>
+  <desc id="desc">A simple dog face mark with voice wave arcs.</desc>
+  <rect width="1024" height="1024" rx="228" fill="#FFFFFF"/>
+  <path d="M332 420c28-104 110-174 214-174s188 70 214 174" fill="none" stroke="#222222" stroke-width="40" stroke-linecap="round"/>
+  <path d="M334 420 260 324c-20-26-58-8-52 24l32 174c18 98 102 170 202 170h210c100 0 184-72 202-170l32-174c6-32-32-50-52-24l-74 96" fill="none" stroke="#222222" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M480 538c20 16 44 24 68 24s48-8 68-24" fill="none" stroke="#F27A1A" stroke-width="34" stroke-linecap="round"/>
+  <path d="M418 454h2M676 454h2" fill="none" stroke="#222222" stroke-width="48" stroke-linecap="round"/>
+  <path d="M518 474h60l-30 34Z" fill="#222222"/>
+  <path d="M772 492c34 22 54 56 54 94M850 444c62 42 98 106 98 180" fill="none" stroke="#17A398" stroke-width="32" stroke-linecap="round"/>
+</svg>

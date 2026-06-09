@@ -2,11 +2,11 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "module description"
+      "value": "申请权限"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "description"
+      "value": "申请权限"
     },
     {
       "name": "EntryAbility_label",

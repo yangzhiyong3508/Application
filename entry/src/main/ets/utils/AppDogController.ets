@@ -14,7 +14,7 @@ export class AppDogController {
 
     this.commandClient.connect(
       (msg: string) => {
-        console.log(`📩 收到消息: ${msg}`); // 打印收到的指令
+        console.log(` 收到消息: ${msg}`); // 打印收到的指令
       }
     )
   }
