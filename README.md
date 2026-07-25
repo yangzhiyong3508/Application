@@ -1,74 +1,107 @@
-# EDOG Application（HarmonyOS）
+<div align="center">
 
-EDOG 智能四足机器人 **手机端 App**（OpenHarmony / HarmonyOS NEXT 工程）。
+# 📱 EDOG Application
 
-狗端硬件：**软通动力通晓开发板（RK2206）**。
+**HarmonyOS 手机端** · 遥控 · 陪伴 · 调参 · 校准
 
-主仓库：[Edog_powered_by_rk2206](https://github.com/yangzhiyong3508/Edog_powered_by_rk2206)
+[![HarmonyOS](https://img.shields.io/badge/HarmonyOS-App-red?style=for-the-badge&logo=harmonyos&logoColor=white)](https://github.com/yangzhiyong3508/Application)
+[![Board](https://img.shields.io/badge/Dog-通晓%20RK2206-0ea5e9?style=for-the-badge)](https://github.com/yangzhiyong3508/edog_project_docker)
+[![Monorepo](https://img.shields.io/badge/Monorepo-Edog__powered__by__rk2206-1F8BFF?style=for-the-badge)](https://github.com/yangzhiyong3508/Edog_powered_by_rk2206)
 
-## 功能概览
+<img src="entry/src/main/resources/base/media/app_icon_logo.png" width="128" alt="EDOG App Logo"/>
 
-- **控制页**：视频预览（连深度学习转发 `8766`）、九宫格遥控、跟随开关、语音面板（唤醒词/语速/音量）
-- **陪伴页**：学我说话 / 陪我聊天、互动动作（喂食/逗它/夸奖/复原）
-- **运动调参**：前后俯仰（机身高度差）、步长/步高、速度等级
-- **舵机校准**：12DOF 分通道物理中位角
-- **事件提醒**、聊天记录、账号设置
+<p><b>和你的机械狗一起玩：看视频、喊名字、跟你走、调步态。</b></p>
 
-## 目录结构
+</div>
 
+---
+
+## ✨ 功能亮点
+
+| | 模块 | 你能做什么 |
+|:---:|:---|:---|
+| 🎮 | **控制页** | 实时图传预览、九宫格遥控、跟随开关、语音人设 |
+| 💬 | **陪伴页** | 学我说话 / 陪我聊天、喂食·逗它·夸奖·复原 |
+| 📐 | **运动调参** | 前后俯仰、步长/步高、速度等级一键下发 |
+| 🔧 | **舵机校准** | 12 路有效通道物理中位角微调 |
+| ⏰ | **提醒 / 记录** | 事件提醒、扣子聊天历史 |
+
+```mermaid
+flowchart TB
+  UI[📱 控制 / 陪伴 / 调参] --> API[☁️ Spring Boot]
+  UI -->|ws :8766| VIS[🧠 视觉转发]
+  API -->|IoTDA| DOG[🐕 通晓 RK2206]
 ```
+
+---
+
+## 🗂️ 工程结构
+
+```text
 Application/
-├── AppScope/                 # 应用级配置与资源
-├── entry/
-│   └── src/main/
-│       ├── ets/
-│       │   ├── pages/        # Control / Conversation / ServoAdjust / MotionTuning ...
-│       │   ├── components/
-│       │   ├── utils/        # HTTP、图传 WS、调参、校准等
-│       │   └── theme/
-│       └── resources/
+├── AppScope/                      # 应用级资源
+├── entry/src/main/
+│   ├── ets/
+│   │   ├── pages/                 # Control · Conversation · MotionTuning · ServoAdjust …
+│   │   ├── components/            # 卡片、芯片、输入等 UI
+│   │   ├── utils/                 # HTTP · 图传 WS · 调参 · 校准
+│   │   └── theme/
+│   └── resources/base/media/      # 图标与插画
 ├── hvigor/
-├── build-profile.json5
 └── oh-package.json5
 ```
 
-## 开发环境
+---
 
-- DevEco Studio（与工程 API 版本匹配）
-- HarmonyOS SDK / ohpm
-- 可访问后端：默认 `localhost` 配置为云服务器 IP（可在 App 内改）
+## 🛠️ 开发与运行
 
-## 构建与运行
+**环境：** DevEco Studio + 匹配的 HarmonyOS SDK / ohpm  
 
-1. 用 DevEco 打开本仓库根目录  
-2. 同步依赖（ohpm）  
-3. 连接真机/模拟器，Run `entry`  
+1. 打开本仓库根目录  
+2. 同步依赖  
+3. 真机或模拟器 Run `entry`  
 
 ```bash
-# 命令行示例（需本机已配置 hvigor）
+# 已配置 hvigor 时
 hvigorw assembleHap
 ```
 
-## 与后端约定
+> 后端地址、视觉 IP 可在 App 内配置（`localhost` / `deeplearning_ip`）。
+
+---
+
+## 🔌 与后端约定（速查）
 
 | 能力 | 接口 |
 |------|------|
-| 遥控 | `POST /action` `{ "command", "stepLengthMm?", "stepHeightMm?" }` |
-| 跟随开关 | `GET/POST /tracker/status` |
-| 语音设置 | `/api/accounts/updateVoice`、`updateWakeWord` |
-| 调参 | `/api/dog-debug/config`、`runtime-tuning` |
+| 遥控 | `POST /action` |
+| 跟随 | `GET/POST /tracker/status` |
+| 语音人设 | `/api/accounts/updateVoice` · `updateWakeWord` |
+| 调参 | `/api/dog-debug/config` · `runtime-tuning` |
 | 舵机 | `/api/dog-debug/*` |
 | 图传 | `ws://{deeplearning_ip}:8766` |
 
-## 安全
+---
 
-- 不要提交 Coze Token、华为 IAM 密码等  
-- `CozeUtil` 中 token 请改为本地配置或由后端代理  
-- 见根目录 `.gitignore`
+## 🔒 安全
 
-## 相关仓库
+- 勿提交 Coze Token、IAM 密码等敏感信息  
+- 本地密钥走配置 / 后端代理，保持 `.gitignore` 生效  
 
-- 后端：[SpringBoot](https://github.com/yangzhiyong3508/SpringBoot)  
-- 视觉：[DeepLearning](https://github.com/yangzhiyong3508/DeepLearning)  
-- 图传：[ESP32](https://github.com/yangzhiyong3508/ESP32)  
-- 狗端固件：[edog_project_docker](https://github.com/yangzhiyong3508/edog_project_docker)  
+---
+
+## 🔗 相关仓库
+
+| 端 | 链接 |
+|----|------|
+| 主仓 | [Edog_powered_by_rk2206](https://github.com/yangzhiyong3508/Edog_powered_by_rk2206) |
+| 后端 | [SpringBoot](https://github.com/yangzhiyong3508/SpringBoot) |
+| 视觉 | [DeepLearning](https://github.com/yangzhiyong3508/DeepLearning) |
+| 图传 | [ESP32](https://github.com/yangzhiyong3508/ESP32) |
+| 固件 | [edog_project_docker](https://github.com/yangzhiyong3508/edog_project_docker) |
+
+<div align="center">
+
+⭐ 遥控只是开始，陪伴才是终点
+
+</div>
