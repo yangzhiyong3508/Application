@@ -2,6 +2,8 @@
 
 EDOG 智能四足机器人 **手机端 App**（OpenHarmony / HarmonyOS NEXT 工程）。
 
+狗端硬件：**软通动力通晓开发板（RK2206）**。
+
 主仓库：[Edog_powered_by_rk2206](https://github.com/yangzhiyong3508/Edog_powered_by_rk2206)
 
 ## 功能概览
