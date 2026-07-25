@@ -1,0 +1,92 @@
+{
+  "routerMap": [
+    {
+      "name": "Login",
+      "pageSourceFile": "src/main/ets/pages/Login.ets",
+      "buildFunction": "LoginBuilder",
+      "data": {
+        "description" : "this is Login"
+      }
+    },
+    {
+      "name": "Register",
+      "pageSourceFile": "src/main/ets/pages/Register.ets",
+      "buildFunction": "RegisterBuilder",
+      "data": {
+        "description" : "this is Register"
+      }
+    },
+    {
+      "name": "Index",
+      "pageSourceFile": "src/main/ets/pages/Index.ets",
+      "buildFunction": "IndexBuilder",
+      "data": {
+        "description" : "this is Index"
+      }
+    },
+    {
+      "name": "About",
+      "pageSourceFile": "src/main/ets/pages/About.ets",
+      "buildFunction": "AboutBuilder",
+      "data": {
+        "description" : "this is About"
+      }
+    },
+    {
+      "name": "Settings",
+      "pageSourceFile": "src/main/ets/pages/Settings.ets",
+      "buildFunction": "SettingsBuilder",
+      "data": {
+        "description" : "this is Settings"
+      }
+    },
+    {
+      "name": "Command",
+      "pageSourceFile": "src/main/ets/pages/Command.ets",
+      "buildFunction": "CommandBuilder",
+      "data": {
+        "description" : "this is Command"
+      }
+    },
+    {
+      "name": "ChatHistory",
+      "pageSourceFile": "src/main/ets/pages/ChatHistory.ets",
+      "buildFunction": "ChatHistoryBuilder",
+      "data": {
+        "description" : "this is ChatHistory"
+      }
+    },
+    {
+      "name": "EventReminders",
+      "pageSourceFile": "src/main/ets/pages/EventReminders.ets",
+      "buildFunction": "EventRemindersBuilder",
+      "data": {
+        "description": "event reminders list"
+      }
+    },
+    {
+      "name": "ServoAdjust",
+      "pageSourceFile": "src/main/ets/pages/ServoAdjust.ets",
+      "buildFunction": "ServoAdjustBuilder",
+      "data": {
+        "description" : "this is ServoAdjust"
+      }
+    },
+    {
+      "name": "MotionTuning",
+      "pageSourceFile": "src/main/ets/pages/MotionTuning.ets",
+      "buildFunction": "MotionTuningBuilder",
+      "data": {
+        "description": "motion pitch step speed tuning"
+      }
+    },
+    {
+      "name": "UserInfoFill",
+      "pageSourceFile": "src/main/ets/pages/UserInfoFill.ets",
+      "buildFunction": "UserInfoFillBuilder",
+      "data": {
+        "description" : "this is UserInfoFill"
+      }
+    }
+  ]
+}

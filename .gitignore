@@ -1,0 +1,44 @@
+# HarmonyOS / hvigor
+/node_modules
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-tidy
+**/.test
+/.appanalyzer
+oh-package-lock.json5
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+**/local_secrets*
+**/secrets/
+*Token*
+*API*key*
+!**/UpdatePasswordUtil.ets
+
+# IDE / OS
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+tmp/
+temp/
+.superpowers/
+/.playwright-mcp/
+/tmp-*
+/entry/src/main.zip
+/tools/*.log
+design/
+docs/
+esp32-inmp441-idf/

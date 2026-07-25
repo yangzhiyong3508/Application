@@ -1,0 +1,24 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "申请权限"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "申请权限"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "智能机械狗"
+    },
+    {
+      "name": "permreason_camera",
+      "value": "使用摄像头"
+    },
+    {
+      "name": "permreason_agent_reminder",
+      "value": "用于在日程临近时弹出系统提醒通知"
+    }
+  ]
+}

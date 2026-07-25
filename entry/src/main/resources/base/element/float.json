@@ -1,0 +1,27 @@
+{
+  "float": [
+    { "name": "page_text_font_size",   "value": "50fp" },
+
+    { "name": "radius_sm",             "value": "8vp" },
+    { "name": "radius_md",             "value": "12vp" },
+    { "name": "radius_lg",             "value": "16vp" },
+    { "name": "radius_xl",             "value": "22vp" },
+    { "name": "radius_2xl",            "value": "28vp" },
+
+    { "name": "space_xs",              "value": "4vp" },
+    { "name": "space_sm",              "value": "8vp" },
+    { "name": "space_md",              "value": "12vp" },
+    { "name": "space_lg",              "value": "16vp" },
+    { "name": "space_xl",              "value": "24vp" },
+    { "name": "space_2xl",             "value": "32vp" },
+
+    { "name": "font_size_caption",     "value": "12fp" },
+    { "name": "font_size_body",        "value": "14fp" },
+    { "name": "font_size_subtitle",    "value": "16fp" },
+    { "name": "font_size_title",       "value": "20fp" },
+    { "name": "font_size_display",     "value": "28fp" },
+
+    { "name": "tap_target_min",        "value": "44vp" },
+    { "name": "tablet_breakpoint",     "value": "700vp" }
+  ]
+}

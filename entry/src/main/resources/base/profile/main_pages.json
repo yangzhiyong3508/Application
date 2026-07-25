@@ -1,0 +1,15 @@
+{
+  "src": [
+    "pages/Login",
+    "pages/Register",
+    "pages/Index",
+    "pages/About",
+    "pages/Command",
+    "pages/ChatHistory",
+    "pages/EventReminders",
+    "pages/Settings",
+    "pages/ServoAdjust",
+    "pages/MotionTuning",
+    "pages/UserInfoFill"
+  ]
+}
