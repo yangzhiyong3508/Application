@@ -83,13 +83,6 @@ hvigorw assembleHap
 
 ---
 
-## 🔒 安全
-
-- 勿提交 Coze Token、IAM 密码等敏感信息  
-- 本地密钥走配置 / 后端代理，保持 `.gitignore` 生效  
-
----
-
 ## 🔗 相关仓库
 
 | 端 | 链接 |
